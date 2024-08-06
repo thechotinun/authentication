@@ -21,6 +21,12 @@ test: clean critic security lint
 	go test -v -timeout 30s -coverprofile=cover.out -cover ./...
 	go tool cover -func=cover.out
 
+test.public:
+	go test -v -timeout 30s -coverprofile=cover.out -cover -run "TestPublicRoutes" ./...
+
+test.private:
+	go test -v -timeout 30s -coverprofile=cover.out -cover -run "TestPrivateRoutes" ./...
+
 build: test
 	CGO_ENABLED=0 go build -ldflags="-w -s" -o $(BUILD_DIR)/$(APP_NAME) main.go
 

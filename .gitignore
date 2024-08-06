@@ -10,3 +10,4 @@ tmp/
 
 # Environment variables
 .env
+.env.test

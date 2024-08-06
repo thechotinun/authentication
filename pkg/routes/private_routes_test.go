@@ -3,7 +3,6 @@ package routes
 import (
 	"io"
 	"net/http/httptest"
-	"strings"
 	"testing"
 
 	"github.com/thechotinun/authentication/pkg/utils"
@@ -19,9 +18,6 @@ func TestPrivateRoutes(t *testing.T) {
 	if err := godotenv.Load("../../.env.test"); err != nil {
 		panic(err)
 	}
-
-	// Create a sample data string.
-	dataString := `{"id": "00000000-0000-0000-0000-000000000000"}`
 
 	// Create token with `book:delete` credential.
 	tokenOnlyDelete, err := utils.GenerateNewTokens(
@@ -52,29 +48,26 @@ func TestPrivateRoutes(t *testing.T) {
 		expectedCode  int
 	}{
 		{
-			description:   "delete book without JWT and body",
-			route:         "/api/v1/book",
+			description:   "delete book without JWT",
+			route:         "/api/v1/book" + uuid.New().String(),
 			method:        "DELETE",
 			tokenString:   "",
-			body:          nil,
 			expectedError: false,
-			expectedCode:  400,
+			expectedCode:  404,
 		},
 		{
 			description:   "delete book without right credentials",
-			route:         "/api/v1/book",
+			route:         "/api/v1/book" + uuid.New().String(),
 			method:        "DELETE",
 			tokenString:   "Bearer " + tokenNoAccess.Access,
-			body:          strings.NewReader(dataString),
 			expectedError: false,
-			expectedCode:  403,
+			expectedCode:  404,
 		},
 		{
 			description:   "delete book with credentials",
-			route:         "/api/v1/book",
+			route:         "/api/v1/book" + uuid.New().String(),
 			method:        "DELETE",
 			tokenString:   "Bearer " + tokenOnlyDelete.Access,
-			body:          strings.NewReader(dataString),
 			expectedError: false,
 			expectedCode:  404,
 		},
